@@ -261,3 +261,44 @@ export const listCollegeRegistrations = asyncHandler(async (req, res) => {
 });
 
 
+// File download: verifiedCollegeDocument
+export const downloadVerifiedCollegeDocument = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const registration = await CollegeRegistration.findById(id).lean();
+    if (!registration) {
+        throw new ApiError(404, "College registration not found");
+    }
+    const doc = registration.verifiedCollegeDocument;
+    if (!doc || !doc.data) {
+        throw new ApiError(404, "Verified college document not found");
+    }
+    const dispositionType = String(req.query.inline) === "true" ? "inline" : "attachment";
+    res.setHeader("Content-Type", doc.contentType || "application/octet-stream");
+    res.setHeader(
+        "Content-Disposition",
+        `${dispositionType}; filename="${encodeURIComponent(doc.filename || "verified_document")}` + "\""
+    );
+    return res.end(Buffer.from(doc.data.buffer || doc.data));
+});
+
+// File download: proofOfDesignation
+export const downloadProofOfDesignation = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const registration = await CollegeRegistration.findById(id).lean();
+    if (!registration) {
+        throw new ApiError(404, "College registration not found");
+    }
+    const doc = registration.proofOfDesignation;
+    if (!doc || !doc.data) {
+        throw new ApiError(404, "Proof of designation not found");
+    }
+    const dispositionType = String(req.query.inline) === "true" ? "inline" : "attachment";
+    res.setHeader("Content-Type", doc.contentType || "application/octet-stream");
+    res.setHeader(
+        "Content-Disposition",
+        `${dispositionType}; filename="${encodeURIComponent(doc.filename || "proof_of_designation")}` + "\""
+    );
+    return res.end(Buffer.from(doc.data.buffer || doc.data));
+});
+
+

@@ -137,6 +137,12 @@ const loginUser = asyncHandler(async (req, res) =>{
                 .select("_id name type domain code status")
                 .lean()
             profile = { profileType: "collage_admin", profile: ca || null, college: col || null }
+        } else if (user.userType === "peer") {
+            const { Peer } = await import("../models/peer.model.js")
+            const p = await Peer.findOne({ user: user._id })
+                .select("_id name students user")
+                .lean()
+            profile = { profileType: "peer", profile: p || null }
         }
     } catch (_) {
         // ignore profile resolution errors; keep login functional

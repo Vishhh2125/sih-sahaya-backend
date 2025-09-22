@@ -84,3 +84,23 @@ export const deleteCollegeAdmin = asyncHandler(async (req, res) => {
         new ApiResponse(200, {}, "College admin deleted successfully")
     );
 });
+
+// Download proof document for a college admin
+export const downloadCollegeAdminProof = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const docOwner = await CollegeAdmin.findById(id).lean();
+    if (!docOwner) {
+        throw new ApiError(404, "College admin not found");
+    }
+    const doc = docOwner.proofDocument;
+    if (!doc || !doc.data) {
+        throw new ApiError(404, "Proof document not found");
+    }
+    const dispositionType = String(req.query.inline) === "true" ? "inline" : "attachment";
+    res.setHeader("Content-Type", doc.contentType || "application/octet-stream");
+    res.setHeader(
+        "Content-Disposition",
+        `${dispositionType}; filename="${encodeURIComponent(doc.filename || "proof_document")}` + "\""
+    );
+    return res.end(Buffer.from(doc.data.buffer || doc.data));
+});

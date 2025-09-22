@@ -70,3 +70,27 @@ export const deleteCollege = asyncHandler(async (req, res) => {
         new ApiResponse(200, {}, "College deleted successfully")
     );
 });
+
+// Download a specific college document by index
+export const downloadCollegeDocument = asyncHandler(async (req, res) => {
+    const { id, index } = req.params;
+    const idx = Number(index);
+    if (Number.isNaN(idx) || idx < 0) {
+        throw new ApiError(400, "Invalid document index");
+    }
+    const college = await College.findById(id).lean();
+    if (!college) {
+        throw new ApiError(404, "College not found");
+    }
+    const doc = Array.isArray(college.documents) ? college.documents[idx] : undefined;
+    if (!doc || !doc.data) {
+        throw new ApiError(404, "Document not found");
+    }
+    const dispositionType = String(req.query.inline) === "true" ? "inline" : "attachment";
+    res.setHeader("Content-Type", doc.contentType || "application/octet-stream");
+    res.setHeader(
+        "Content-Disposition",
+        `${dispositionType}; filename="${encodeURIComponent(doc.filename || "document")}` + "\""
+    );
+    return res.end(Buffer.from(doc.data.buffer || doc.data));
+});
