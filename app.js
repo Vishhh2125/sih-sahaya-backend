@@ -6,12 +6,15 @@ import morgan from 'morgan';
 dotenv.config();
 
 
-const  app = express();
-app.use(morgan('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static("public"))
-app.use(cookieParser())
+const app = express();
+
+app.use(morgan('dev'));                        // Logs requests
+app.use(express.json());                       // Parse JSON body
+app.use(express.urlencoded({ extended: true })); // Parse form data
+app.use(express.static("public"));             // Serve static files
+app.use(cookieParser());                       // Parse cookies
+app.use(cors({ origin: "*" }));                // Allow cross-origin requests
+
 
 
 
