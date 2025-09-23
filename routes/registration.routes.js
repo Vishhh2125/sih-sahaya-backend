@@ -13,7 +13,7 @@ router.post("/college-registrations/:id/pending", verifyJWT, setPendingCollegeRe
 
 
 //getting all 
-router.get("/college-registrations", verifyJWT, listCollegeRegistrations);
+router.get("/college-registrations",  listCollegeRegistrations);
 
 // File downloads (admin only)
 router.get("/college-registrations/:id/files/verified", verifyJWT, downloadVerifiedCollegeDocument);

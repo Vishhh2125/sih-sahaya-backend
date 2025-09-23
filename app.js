@@ -13,7 +13,7 @@ app.use(express.json());                       // Parse JSON body
 app.use(express.urlencoded({ extended: true })); // Parse form data
 app.use(express.static("public"));             // Serve static files
 app.use(cookieParser());                       // Parse cookies
-app.use(cors({ origin: "*" }));                // Allow cross-origin requests
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));                // Allow cross-origin requests
 
 
 
@@ -30,6 +30,7 @@ import collegeRouter from './routes/college.routes.js'
 import collegeAdminRouter from './routes/collegeAdmin.routes.js'
 import appointmentRouter from './routes/appointment.routes.js'
 import peerRouter from './routes/peer.routes.js'
+import counselorRouter from './routes/counselor.routes.js'
 
 
 
@@ -44,6 +45,7 @@ app.use("/api/v1/colleges", collegeRouter)
 app.use("/api/v1/college-admins", collegeAdminRouter)
 app.use("/api/v1/appointments", appointmentRouter)
 app.use("/api/v1/peers", peerRouter)
+app.use("/api/v1/counselors", counselorRouter)
 
 
 
